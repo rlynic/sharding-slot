@@ -1,0 +1,2 @@
+com.rlynic.sharding.slot.database.sql.token.SlotSQLTokenGenerator
+com.rlynic.sharding.slot.database.sql.token.SlotInsertValueSQLToken
