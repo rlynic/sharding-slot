@@ -20,9 +20,19 @@
         <sharding-core-rewrite.version>4.0.0-SNAPSHOT</sharding-core-rewrite.version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://packages.aliyun.com/maven/repository/2012941-release-2jivvD/</url>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://packages.aliyun.com/maven/repository/2012941-snapshot-8R3oFA/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <modules>
         <module>sharding-slot-database</module>
-        <module>sharding-slot-example</module>
     </modules>
 
     <dependencyManagement>
