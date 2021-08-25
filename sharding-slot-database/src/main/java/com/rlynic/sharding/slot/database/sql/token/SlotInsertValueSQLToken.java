@@ -8,7 +8,6 @@ package com.rlynic.sharding.slot.database.sql.token;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.rlynic.sharding.slot.database.SlotContextHolder;
-import com.rlynic.sharding.slot.database.configuration.SlotShardingProperties;
 import lombok.Setter;
 import org.apache.shardingsphere.sql.parser.relation.segment.insert.InsertValueContext;
 import org.apache.shardingsphere.sql.parser.relation.segment.insert.expression.DerivedLiteralExpressionSegment;
@@ -34,8 +33,6 @@ import java.util.List;
 @Setter
 public class SlotInsertValueSQLToken extends AbstractSQLTokenGenerator implements PreviousSQLTokensAware {
     private List<SQLToken> previousSQLTokens;
-
-    private SlotShardingProperties slotShardingProperties;
 
     @Override
     protected boolean isGenerateSQLToken(final InsertStatement insertStatement) {

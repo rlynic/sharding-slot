@@ -8,7 +8,6 @@ package com.rlynic.sharding.slot.database.sql.token;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.rlynic.sharding.slot.database.configuration.SlotShardingProperties;
 import lombok.Setter;
 import org.apache.shardingsphere.sql.parser.relation.statement.SQLStatementContext;
 import org.apache.shardingsphere.sql.parser.sql.segment.dml.column.InsertColumnsSegment;
@@ -23,8 +22,6 @@ import org.apache.shardingsphere.underlying.rewrite.sql.token.pojo.generic.Inser
  */
 @Setter
 public class SlotSQLTokenGenerator extends AbstractSQLTokenGenerator {
-
-    private SlotShardingProperties slotShardingProperties;
 
     @Override
     protected boolean isGenerateSQLToken(final InsertStatement insertStatement) {
