@@ -8,8 +8,6 @@ package com.rlynic.sharding.slot.database.strategy;
 import com.rlynic.sharding.slot.database.configuration.ShardingAutoConfiguration;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -19,10 +17,6 @@ import java.util.Collection;
  * @author crisis
  */
 public class HashSlotShardingAlgorithm implements PreciseShardingAlgorithm {
-
-    private final static int SLOT_SIZE = 16384;
-
-    private final static Logger log = LoggerFactory.getLogger(HashSlotShardingAlgorithm.class);
 
     private SlotDatabaseMatcher matcher;
 

@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.rlynic.sharding.slot.database.SlotContextHolder;
 import com.rlynic.sharding.slot.database.configuration.ShardingAutoConfiguration;
 import com.rlynic.sharding.slot.database.configuration.SlotShardingProperties;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.shardingsphere.sql.parser.relation.statement.SQLStatementContext;
 import org.apache.shardingsphere.sql.parser.relation.statement.impl.InsertSQLStatementContext;
 import org.apache.shardingsphere.sql.parser.sql.statement.dml.InsertStatement;
@@ -38,7 +39,11 @@ public class ShardingSlotInsertValueParameterRewriter implements ParameterRewrit
 
     @Override
     public void rewrite(final ParameterBuilder parameterBuilder, final SQLStatementContext sqlStatementContext, final List<Object> parameters) {
-        Iterator<Integer> slots = SlotContextHolder.get().iterator();
+        List<Integer> slotsContext = SlotContextHolder.get();
+        if(CollectionUtils.isEmpty(slotsContext)){
+            return;
+        }
+        Iterator<Integer> slots = slotsContext.iterator();
         int count = 0;
 
         List<String> columnNames = ((InsertStatement) sqlStatementContext.getSqlStatement()).getColumnNames();
