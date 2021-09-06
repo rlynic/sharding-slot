@@ -9,15 +9,15 @@
 
 	<groupId>com.rlynic</groupId>
     <artifactId>sharding-slot</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <mybatis-spring.version>2.1.3</mybatis-spring.version>
-        <sharding-jdbc.version>4.0.0</sharding-jdbc.version>
-        <sharding-core-rewrite.version>4.0.0-SNAPSHOT</sharding-core-rewrite.version>
+        <sharding-jdbc.version>4.1.1</sharding-jdbc.version>
+        <sharding-core-rewrite.version>4.1.1-SNAPSHOT</sharding-core-rewrite.version>
         
         <spring-boot-custom.version>2.3.3.1-SNAPSHOT</spring-boot-custom.version>
 		

@@ -10,8 +10,8 @@ import com.rlynic.sharding.slot.database.SlotContextHolder;
 import com.rlynic.sharding.slot.database.configuration.ShardingAutoConfiguration;
 import com.rlynic.sharding.slot.database.configuration.SlotShardingProperties;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.shardingsphere.sql.parser.relation.statement.SQLStatementContext;
-import org.apache.shardingsphere.sql.parser.relation.statement.impl.InsertSQLStatementContext;
+import org.apache.shardingsphere.sql.parser.binder.statement.SQLStatementContext;
+import org.apache.shardingsphere.sql.parser.binder.statement.dml.InsertStatementContext;
 import org.apache.shardingsphere.sql.parser.sql.statement.dml.InsertStatement;
 import org.apache.shardingsphere.underlying.rewrite.parameter.builder.ParameterBuilder;
 import org.apache.shardingsphere.underlying.rewrite.parameter.builder.impl.GroupedParameterBuilder;
@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author crisis
  */
-public class ShardingSlotInsertValueParameterRewriter implements ParameterRewriter {
+public class ShardingSlotInsertValueParameterRewriter implements ParameterRewriter<InsertStatementContext> {
     private SlotShardingProperties slotShardingProperties;
 
     @Override
@@ -33,12 +33,12 @@ public class ShardingSlotInsertValueParameterRewriter implements ParameterRewrit
         if(null == slotShardingProperties){
             slotShardingProperties = ShardingAutoConfiguration.context.getBean(SlotShardingProperties.class);
         }
-        return sqlStatementContext instanceof InsertSQLStatementContext
-                && slotShardingProperties.getTableNames().contains(((InsertStatement) sqlStatementContext.getSqlStatement()).getTable().getTableName());
+        return sqlStatementContext instanceof InsertStatementContext
+                && slotShardingProperties.getTableNames().contains(((InsertStatement) sqlStatementContext.getSqlStatement()).getTable().getTableName().getIdentifier().getValue());
     }
 
     @Override
-    public void rewrite(final ParameterBuilder parameterBuilder, final SQLStatementContext sqlStatementContext, final List<Object> parameters) {
+    public void rewrite(ParameterBuilder parameterBuilder, InsertStatementContext sqlStatementContext, List<Object> parameters) {
         List<Integer> slotsContext = SlotContextHolder.get();
         if(CollectionUtils.isEmpty(slotsContext)){
             return;
@@ -46,9 +46,9 @@ public class ShardingSlotInsertValueParameterRewriter implements ParameterRewrit
         Iterator<Integer> slots = slotsContext.iterator();
         int count = 0;
 
-        List<String> columnNames = ((InsertStatement) sqlStatementContext.getSqlStatement()).getColumnNames();
+        List<String> columnNames = sqlStatementContext.getSqlStatement().getColumnNames();
         int cIndex = columnNames.indexOf(slotShardingProperties.getColumn()) + 1;
-        for (List<Object> each : ((InsertSQLStatementContext) sqlStatementContext).getGroupedParameters()) {
+        for (List<Object> each : sqlStatementContext.getGroupedParameters()) {
             if(cIndex <= 0){
                 cIndex = ((GroupedParameterBuilder) parameterBuilder).getParameterBuilders().get(count).getParameters().size();
             }

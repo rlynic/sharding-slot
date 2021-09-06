@@ -8,8 +8,8 @@ package com.rlynic.sharding.slot.database.sql.token;
 import com.rlynic.sharding.slot.database.SlotContextHolder;
 import com.rlynic.sharding.slot.database.configuration.ShardingAutoConfiguration;
 import com.rlynic.sharding.slot.database.configuration.SlotShardingProperties;
-import org.apache.shardingsphere.sql.parser.relation.statement.SQLStatementContext;
-import org.apache.shardingsphere.sql.parser.relation.statement.impl.InsertSQLStatementContext;
+import org.apache.shardingsphere.sql.parser.binder.statement.SQLStatementContext;
+import org.apache.shardingsphere.sql.parser.binder.statement.dml.InsertStatementContext;
 import org.apache.shardingsphere.sql.parser.sql.statement.dml.InsertStatement;
 import org.apache.shardingsphere.underlying.rewrite.sql.token.generator.OptionalSQLTokenGenerator;
 
@@ -18,7 +18,7 @@ import org.apache.shardingsphere.underlying.rewrite.sql.token.generator.Optional
  *
  * @author crisis
  */
-public abstract class AbstractSQLTokenGenerator implements OptionalSQLTokenGenerator {
+public abstract class AbstractSQLTokenGenerator implements OptionalSQLTokenGenerator<InsertStatementContext> {
 
     protected SlotShardingProperties slotShardingProperties;
 
@@ -27,7 +27,7 @@ public abstract class AbstractSQLTokenGenerator implements OptionalSQLTokenGener
         if(null == slotShardingProperties){
             slotShardingProperties = ShardingAutoConfiguration.context.getBean(SlotShardingProperties.class);
         }
-        boolean isSlot = sqlStatementContext instanceof InsertSQLStatementContext
+        boolean isSlot = sqlStatementContext instanceof InsertStatementContext
                 && isGenerateSQLToken((InsertStatement) sqlStatementContext.getSqlStatement());
         if(!isSlot){
             SlotContextHolder.clear();

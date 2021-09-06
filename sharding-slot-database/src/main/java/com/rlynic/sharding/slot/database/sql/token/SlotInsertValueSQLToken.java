@@ -5,17 +5,15 @@
  */
 package com.rlynic.sharding.slot.database.sql.token;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.rlynic.sharding.slot.database.SlotContextHolder;
 import lombok.Setter;
-import org.apache.shardingsphere.sql.parser.relation.segment.insert.InsertValueContext;
-import org.apache.shardingsphere.sql.parser.relation.segment.insert.expression.DerivedLiteralExpressionSegment;
-import org.apache.shardingsphere.sql.parser.relation.segment.insert.expression.DerivedParameterMarkerExpressionSegment;
-import org.apache.shardingsphere.sql.parser.relation.segment.insert.expression.DerivedSimpleExpressionSegment;
-import org.apache.shardingsphere.sql.parser.relation.statement.SQLStatementContext;
-import org.apache.shardingsphere.sql.parser.relation.statement.impl.InsertSQLStatementContext;
-import org.apache.shardingsphere.sql.parser.sql.segment.dml.assignment.InsertValuesSegment;
+import org.apache.shardingsphere.sql.parser.binder.segment.insert.values.InsertValueContext;
+import org.apache.shardingsphere.sql.parser.binder.segment.insert.values.expression.DerivedLiteralExpressionSegment;
+import org.apache.shardingsphere.sql.parser.binder.segment.insert.values.expression.DerivedParameterMarkerExpressionSegment;
+import org.apache.shardingsphere.sql.parser.binder.segment.insert.values.expression.DerivedSimpleExpressionSegment;
+import org.apache.shardingsphere.sql.parser.binder.statement.dml.InsertStatementContext;
+import org.apache.shardingsphere.sql.parser.sql.segment.dml.column.InsertColumnsSegment;
 import org.apache.shardingsphere.sql.parser.sql.statement.dml.InsertStatement;
 import org.apache.shardingsphere.underlying.rewrite.sql.token.generator.aware.PreviousSQLTokensAware;
 import org.apache.shardingsphere.underlying.rewrite.sql.token.pojo.SQLToken;
@@ -24,6 +22,7 @@ import org.apache.shardingsphere.underlying.rewrite.sql.token.pojo.generic.Inser
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * <code>{@link SlotInsertValueSQLToken}</code>
@@ -36,25 +35,28 @@ public class SlotInsertValueSQLToken extends AbstractSQLTokenGenerator implement
 
     @Override
     protected boolean isGenerateSQLToken(final InsertStatement insertStatement) {
-        return !insertStatement.findSQLSegments(InsertValuesSegment.class).isEmpty()
-                && slotShardingProperties.getTableNames().contains(insertStatement.getTable().getTableName());
+        Optional<InsertColumnsSegment> sqlSegment = insertStatement.getInsertColumns();
+        return sqlSegment.isPresent() && !sqlSegment.get().getColumns().isEmpty()
+                && slotShardingProperties.getTableNames().contains(insertStatement.getTable().getTableName().getIdentifier().getValue());
     }
 
     @Override
-    public final SQLToken  generateSQLToken(final SQLStatementContext sqlStatementContext) {
+    public final SQLToken  generateSQLToken(final InsertStatementContext insertStatementContext) {
         try {
             Optional<InsertValuesToken> result = findPreviousSQLToken();
             Preconditions.checkState(result.isPresent());
 
             Iterator<Integer> slots = SlotContextHolder.get().iterator();
+
             int count = 0;
-            for (InsertValueContext each : ((InsertSQLStatementContext) sqlStatementContext).getInsertValueContexts()) {
+            for (InsertValueContext each : insertStatementContext.getInsertValueContexts()) {
                 InsertValue insertValueToken = result.get().getInsertValues().get(count);
-                DerivedSimpleExpressionSegment expressionSegment = isToAddDerivedLiteralExpression((InsertSQLStatementContext) sqlStatementContext, count)
+                DerivedSimpleExpressionSegment expressionSegment = isToAddDerivedLiteralExpression(insertStatementContext, count)
                         ? new DerivedLiteralExpressionSegment(slots.next()) : new DerivedParameterMarkerExpressionSegment(each.getParametersCount());
                 insertValueToken.getValues().add(expressionSegment);
                 count++;
             }
+
             return result.get();
         }finally {
             SlotContextHolder.clear();
@@ -68,10 +70,10 @@ public class SlotInsertValueSQLToken extends AbstractSQLTokenGenerator implement
                 return Optional.of((InsertValuesToken) each);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
-    private boolean isToAddDerivedLiteralExpression(final InsertSQLStatementContext insertSQLStatementContext, final int insertValueCount) {
-        return insertSQLStatementContext.getGroupedParameters().get(insertValueCount).isEmpty();
+    private boolean isToAddDerivedLiteralExpression(final InsertStatementContext insertStatementContext, final int insertValueCount) {
+        return insertStatementContext.getGroupedParameters().get(insertValueCount).isEmpty();
     }
 }
