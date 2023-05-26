@@ -19,7 +19,7 @@
         <sharding-jdbc.version>4.1.1</sharding-jdbc.version>
         <sharding-core-rewrite.version>4.1.1-SNAPSHOT</sharding-core-rewrite.version>
         
-        <spring-boot-custom.version>2.3.3.1-SNAPSHOT</spring-boot-custom.version>
+        <spring-boot-custom.version>2.5.15</spring-boot-custom.version>
 		
 		<compiler-plugin.version>3.7.0</compiler-plugin.version>
 		<source-plugin.version>3.2.1</source-plugin.version>
